@@ -1,27 +1,21 @@
-# Astro Starter Kit: Basics
+# 個人プロフィールサイト
 
-```sh
-npm create astro@latest -- --template basics
+このリポジトリは [Astro](https://astro.build) で作成した
+個人用のポートフォリオ / プロフィールサイトです。
+
+動作確認の際はブラウザのコンソールを開き、`MyIcon loaded successfully` などのログが出ているか確認してください。
+
+## 構成
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
-├── public/
-│   └── favicon.svg
+├── public/            # 静的アセット (プロフィール画像、PDF など)
 ├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
+│   ├── components/    # UI コンポーネント
+│   │   └── Profile.astro
+│   ├── layouts/
 │   │   └── Layout.astro
-│   └── pages
+│   └── pages/
 │       └── index.astro
 └── package.json
 ```

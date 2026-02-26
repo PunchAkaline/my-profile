@@ -1,0 +1,156 @@
+---
+// A simple profile card. Place a `profile.jpg` in the `public` directory or change the
+// `src` below to point to your own image location.
+---
+
+<div id="container">
+	<main>
+		<section id="hero">
+			<canvas id="profile-canvas" width="300" height="300"></canvas>
+			<h1>福田 明星</h1>
+			<p class="tagline">Web developer · Tokyo, Japan</p>
+			<section id="links">
+				<a class="button" href="https://github.com/PunchAkaline" target="_blank">GitHub</a>
+				<a class="button" href="https://note.com/punchlaine" target="_blank">Note</a>
+				<a class="button" href="" target="_blank">Instagram</a>
+			</section>
+		</section>
+	</main>
+
+<script type="module" client:load>
+// using CDN import because direct npm specifier failed in browser
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.183.1/build/three.module.js';
+
+// simple rotating textured sphere using MyIcon.png or fallback profile.jpg
+const init3D = () => {
+	const canvas = document.getElementById('profile-canvas');
+	if (!canvas) return;
+	const scene = new THREE.Scene();
+	const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+	const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+	renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+	const geometry = new THREE.SphereGeometry(1, 32, 32);
+	const material = new THREE.MeshBasicMaterial({ color: 0xdddddd }); // visible before texture loads
+	const sphere = new THREE.Mesh(geometry, material);
+	scene.add(sphere);
+
+	const loader = new THREE.TextureLoader();
+	// try MyIcon then fallback
+	loader.load(
+		'MyIcon.png', // public folder root
+		(tex) => {
+			console.log('MyIcon loaded successfully');
+			material.map = tex;
+			material.needsUpdate = true;
+		},
+		undefined,
+		() => {
+			console.warn('MyIcon.png not found, falling back to profile.jpg');
+			loader.load('profile.jpg', (tex) => {
+				console.log('profile.jpg loaded as fallback');
+				material.map = tex;
+				material.needsUpdate = true;
+			});
+		}
+	);
+
+	camera.position.z = 3;
+
+	function animate() {
+		requestAnimationFrame(animate);
+		sphere.rotation.y += 0.01;
+		renderer.render(scene, camera);
+	}
+	animate();
+
+	window.addEventListener('resize', () => {
+		camera.aspect = canvas.clientWidth / canvas.clientHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+	});
+};
+
+// delay initialization until DOM is ready
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+	init3D();
+} else {
+	document.addEventListener('DOMContentLoaded', init3D);
+}
+</script>
+
+<style>
+	/* basic page reset */
+	html,
+	body {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		font-family: Inter, Roboto, sans-serif;
+		background: #f9f9f9;
+		color: #111;
+	}
+
+	#container {
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		padding: 2rem;
+	}
+
+	#hero {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		max-width: 600px;
+	}
+
+	#profile-canvas {
+		width: 300px;
+		height: 300px;
+		max-width: 100%;
+		border-radius: 50%;
+		box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	}
+
+	h1 {
+		font-size: 2.5rem;
+		margin: 0;
+	}
+
+	.tagline {
+		font-size: 1.125rem;
+		color: #555;
+	}
+
+	#links {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	#links a.button {
+		padding: 0.75rem 1.25rem;
+		background: linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%);
+		color: white;
+		text-decoration: none;
+		border-radius: 8px;
+		transition: background 0.2s;
+	}
+
+	#links a.button:hover {
+		background: linear-gradient(83.21deg, #2a3fe0 0%, #a143d8 100%);
+	}
+
+	@media (max-width: 480px) {
+		#hero {
+			padding: 1rem;
+		}
+		h1 {
+			font-size: 2rem;
+		}
+	}
+</style>
